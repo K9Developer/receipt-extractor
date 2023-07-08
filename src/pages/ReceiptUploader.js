@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import "./receipt_uploader.css";
@@ -36,6 +36,12 @@ const ReceiptUploader = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+      navigate("/notallowed");
+    }
+  }, [])
 
   return (
     <>

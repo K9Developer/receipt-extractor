@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import coffee from "../assets/coffee.png";
@@ -6,6 +6,12 @@ import github from "../assets/github.png";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+      navigate("/notallowed");
+    }
+  }, [])
 
   return (
     <div style={{

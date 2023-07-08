@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
@@ -10,12 +10,26 @@ import ConfirmReceiptCount from './pages/ConfirmReceiptCount';
 import DownloadZip from './pages/DownloadZip';
 import NoStep from './pages/NoStep';
 import ManualFix from './pages/ManualFix';
+import Phone from './pages/phone';
+
 
 
 export default function App() {
+
+  useEffect(() => {
+    const onConfirmRefresh = function (event) {
+      event.preventDefault();
+      return event.returnValue = "Are you sure you want to leave the page?";
+    }
+    
+    window.addEventListener("beforeunload", onConfirmRefresh, { capture: true });
+  }, [])
+
   return (
     <div className="App">
+    
       <Routes>
+        <Route path="/notallowed" element={<Phone />} />
         <Route path="/" element={<Home />} />
         <Route path="/uploader" element={<ReceiptUploader />} />
         <Route path="/webcam" element={<WebcamScreenshot />} />
