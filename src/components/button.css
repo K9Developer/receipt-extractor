@@ -1,0 +1,18 @@
+@import url(https://fonts.googleapis.com/css?family=Rubik:300,regular,500,600,700,800,900,300italic,italic,500italic,600italic,700italic,800italic,900italic);
+
+.button {
+    background: #58B9FF;
+    border: none;
+    padding: 25px;
+    border-radius: 10px;
+    font-size: 2rem;
+    font-family: 'rubik', 'ariel', 'sans-serif';
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    filter: brightness(0.9);
+    border-radius: 5px;
+    transform: translateY(-3px);
+}
