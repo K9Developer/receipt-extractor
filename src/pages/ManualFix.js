@@ -142,61 +142,21 @@ const ManualFix = () => {
     // tmpCanvas.height = window.innerHeight * 0.8;
     let background = new Image();
     background.src = state.img64;
-    let orgWidth = 0;
-    let orgHeight = 0;
+
     // Make sure the image is loaded first otherwise nothing will draw.
     background.onload = () => {
-      // orgWidth = background.width
-      // orgHeight = background.height
-      // let hRatio = tmpCanvas.width / background.width;
-      // let vRatio = tmpCanvas.height / background.height;
-      // ratio = Math.min(hRatio, vRatio);
-      // tmpCtx.drawImage(
-      //   background,
-      //   0,
-      //   0,
-      //   background.width,
-      //   background.height,
-      //   0,
-      //   0,
-      //   background.width * ratio,
-      //   background.height * ratio
-      // );
-      // tmpCanvas.width = background.width * ratio;
-      // tmpCanvas.height = background.height * ratio;
-      // tmpCtx.drawImage(
-      //   background,
-      //   0,
-      //   0,
-      //   background.width,
-      //   background.height,
-      //   0,
-      //   0,
-      //   background.width * ratio,
-      //   background.height * ratio
-      // );
-      // imageData = {
-      //   image: tmpCanvas.toDataURL(),
-      //   width: tmpCanvas.width,
-      //   height: tmpCanvas.height,
-      // };
-      // bgImageData.newWidth = imageData.width;
-      // bgImageData.orgWidth = orgWidth
-      // bgImageData.newHeight = imageData.height;
-      // bgImageData.orgHeight = orgHeight
-      // canvas.setWidth(imageData.width);
-      // canvas.setHeight(imageData.height);
+     
       let bg = new fabric.Image(background);
-      let hRatio = (window.innerWidth * 0.8) / bg.width;
-      let vRatio = (window.innerHeight * 0.8) / bg.height;
+
       // let ratio = Math.min(hRatio, vRatio);
       let ratio = (600 / bg.height) * scaleFactor;
-
+      console.log((bg.height * ratio)/(bg.width * ratio), bg.height / bg.width, window.innerWidth)
+      
       canvas.setDimensions({
         width: bg.width * ratio,
         height: bg.height * ratio,
       });
-      bg.scaleToWidth(canvas.width);
+      bg.scaleToWidth(canvas.width * 2);
       bg.scaleToHeight(canvas.height);
       // bg.width = canvas.width;
       // bg.height = canvas.height;

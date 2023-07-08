@@ -77,6 +77,14 @@ const FileConfirm = () => {
           style={{ marginTop: 20, paddingRight: 32.5, paddingLeft: 32.5 }}
           callback={() => turn(image)}
         />
+        <p style={{
+            fontFamily: "rubik",
+                fontSize: "1.2rem",
+                width: "50%",
+                textAlign: "center",
+                top: "80%",
+                position: "absolute",
+          }}>Rotate the image to make all the receipts orientated correctly</p>
       </div>
     </>
   );

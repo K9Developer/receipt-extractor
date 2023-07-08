@@ -1,18 +1,5 @@
 @import url(
-  https://fonts.googleapis.com/css?family=Rubik:300,
-  regular,
-  500,
-  600,
-  700,
-  800,
-  900,
-  300italic,
-  italic,
-  500italic,
-  600italic,
-  700italic,
-  800italic,
-  900italic
+  https://fonts.googleapis.com/css?family=Rubik:300,regular,500,600,700,800,900,300italic,italic,500italic,600italic,700italic,800italic,900italic
 );
 
 body {
@@ -36,10 +23,10 @@ body {
 }
 
 #c-container {
-  max-width: 50%;
+  max-width: 100%;
   max-height: 80%;
   /* height: 100vh; */
-  width: 51%;
+  /* width: 51%; */
   /* margin-right: "10"; */
   display: flex;
   align-items: center;
@@ -84,4 +71,16 @@ body {
   line-height: 30px;
   width: 80%;
   text-align: center;
+}
+
+.canvas-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upper-canvas {
+  max-width: 100%;
+  
 }

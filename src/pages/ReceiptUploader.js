@@ -123,6 +123,14 @@ const ReceiptUploader = () => {
               The file needs to be an image!
             </p>
           ) : null}
+          <p style={{
+            fontFamily: "rubik",
+                fontSize: "1.2rem",
+                width: "50%",
+                textAlign: "center",
+                top: "80%",
+                position: "absolute",
+          }}>Make sure the receipts are all straight, and on a contrasted background, they should all be as flat as possible and take a picture from a bird's view</p>
         </div>
       )}
     </>

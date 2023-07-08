@@ -284,13 +284,20 @@ const ConfirmReceiptCount = () => {
     }
   }, [anaCompleted]);
 
+  const sortTexts = (textJson) => {
+    return textJson.sort((a,b) => {
+      return a.boundingPoly.vertices[0].y - b.boundingPoly.vertices[0].y
+  })
+  }
+
   const getName = async (apiRes) => {
     /*
     1. Total name must be 6 characters or above
     2. Cut at special chars
     3. Make sure if connecting strings that they are close
     */
-    let textJson = formatTextAnnots(apiRes);
+   let sortedRes = sortTexts(apiRes);
+    let textJson = formatTextAnnots(sortedRes);
     let nameJson = getNameByPosition(textJson);
     if (nameJson[0] == "ERROR") {
       return ["ERROR"];
@@ -300,10 +307,10 @@ const ConfirmReceiptCount = () => {
     return finalName;
   };
 
+  // Stop reload
+  // no phone
+
   const getBusinessName = (img64, counter) => {
-    // 1. When reading business name, order all text by Y position first, so I read it from the top to bottom.
-    // 2. If no name by criteria in top third of image remove name
-    // 3. if remove all double _ and name is less than 3, remove name
     return new Promise((resolve) => {
       const img = new Image();
       img.src = img64;
@@ -353,9 +360,10 @@ const ConfirmReceiptCount = () => {
                   .replace(/[^a-zA-Z_]/g, "")
                   .replace(/_*$/g, "");
 
-                if (totalText.length < 3) {
+                if (totalText.length < 3 || totalText.replaceAll("_", "").length < 4) {
                   resolve({ name: `receipt-${counter}` });
                 } else {
+                  totalText = totalText.replaceAll(/_{2,}/g, "_")
                   resolve({ name: totalText });
                 }
               }
@@ -659,7 +667,7 @@ const ConfirmReceiptCount = () => {
             marginBottom: 50,
           }}
         >
-          Analyzing Receipts...
+          Analyzing Receipts... (this could take a few minutes)
         </p>
         <div
           style={{
@@ -724,7 +732,7 @@ const ConfirmReceiptCount = () => {
                 marginBottom: 30,
               }}
             >
-              Its ok if the detections are not spot on
+              Its ok if the detections are not spot on, click "No" when the receipt count is incorrect or the detection is very off
             </p>
             <div
               style={{
