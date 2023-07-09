@@ -338,7 +338,7 @@ const ConfirmReceiptCount = () => {
             resolve({ name: `receipt-${counter}` });
           } else {
             getName(res[1]).then((name) => {
-              if (name[0] == "ERROR" || name.length < 1) {
+              if (name[0] == "ERROR" || name.length < 1 || name.length > 10) {
                 resolve({ name: `receipt-${counter}` });
               } else {
                 let totalText = "";

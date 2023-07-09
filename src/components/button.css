@@ -9,6 +9,7 @@
     font-family: 'rubik', 'ariel', 'sans-serif';
     cursor: pointer;
     transition: all 0.3s ease;
+    color: black;
 }
 
 .button:hover {

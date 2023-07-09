@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-import coffee from "../assets/coffee.png";
 import github from "../assets/github.png";
+import info from "../assets/info.png";
+import "./home.css"
 
 const Home = () => {
   const navigate = useNavigate();
@@ -26,13 +27,14 @@ const Home = () => {
 
       }
     }>
-      <img src={coffee} width={70} height={70} style={{
+      <a href="https://www.buymeacoffee.com/k9dev" target="_blank" rel="noopener noreferrer"style={{position: "absolute", bottom: 10, left: 10}}><img className="lnk_btn" src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=k9dev&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" /></a>
+      <img src={github} width={60} height={60} className="lnk_btn" style={{
         cursor: "pointer",
         marginRight: 10
-      }} onClick={()=>window.open('https://buymeacoffee.com/k9dev', '_blank', 'noreferrer')}></img>
-      <img src={github} width={70} height={70} style={{
-        cursor: "pointer"
       }} onClick={()=>window.open('https://github.com/KingOfTNT10', '_blank', 'noreferrer')}></img>
+      <img src={info} width={60} height={60} className="lnk_btn" style={{
+        cursor: "pointer"
+      }} onClick={()=>navigate("/info")}></img>
     </div>
     <div
       className="container"

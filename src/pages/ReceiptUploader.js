@@ -108,6 +108,7 @@ const ReceiptUploader = () => {
               fontSize: "2rem",
               fontFamily: "rubik",
               cursor: "pointer",
+              color: "black",
             }}
           >
             UPLOAD IMAGE

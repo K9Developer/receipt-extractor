@@ -11,6 +11,7 @@ import DownloadZip from './pages/DownloadZip';
 import NoStep from './pages/NoStep';
 import ManualFix from './pages/ManualFix';
 import Phone from './pages/phone';
+import Info from './pages/info';
 
 
 
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/download_receipts" element={<DownloadZip />} />
         <Route path="/fix_way" element={<NoStep />} />
         <Route path="/manual" element={<ManualFix />} />
+        <Route path="/info" element={<Info />} />
       </Routes>
     </div>
   );

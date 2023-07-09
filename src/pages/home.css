@@ -1,0 +1,8 @@
+.lnk_btn {
+    transform: scale(1);
+    transition: all 0.2s ease-in-out; 
+}
+
+.lnk_btn:hover {
+    transform: scale(0.95);
+}
