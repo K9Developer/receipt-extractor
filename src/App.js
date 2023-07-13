@@ -13,7 +13,17 @@ import ManualFix from './pages/ManualFix';
 import Phone from './pages/phone';
 import Info from './pages/info';
 
+ /*
+  !! REMEMBER !! Add restriction for key to work only from origin of my website
 
+  TODO:
+  1. Make phone work
+  2. If image orientation is not 0, then change the algorithms for detecting name (pos, getNameByAscii (so it doesnt request lang for every text))
+  3. Fix sometimes the ManualFix doesnt register
+
+  ----
+  problem in 2nd is that the image is not cut, DO: Run the api one time to get orientation, then run a second time after rotated (and cut the header)
+  */
 
 export default function App() {
 

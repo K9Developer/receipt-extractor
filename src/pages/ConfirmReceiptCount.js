@@ -37,7 +37,7 @@ const detectText = async (base64Image) => {
     });
     if (response.ok) {
       const data = await response.json();
-      const extractedText = data.responses[0].textAnnotations;
+      const extractedText = data.responses[0];
       if (extractedText == undefined) {
         return ["ERROR", "RESPONSE != OK"];
       }
@@ -99,6 +99,8 @@ const scaleUpMaskCoordinates = (
 const polyPositions = (points) => {
   let highestPoint = null;
   let lowestPoint = null;
+  let leftPoint = null;
+  let rightPoint = null;
   for (let point of points) {
     if (lowestPoint == null || point.y > lowestPoint.y) {
       lowestPoint = point;
@@ -106,23 +108,84 @@ const polyPositions = (points) => {
     if (highestPoint == null || point.y < highestPoint.y) {
       highestPoint = point;
     }
+    if (leftPoint == null || point.x < leftPoint.x) {
+      leftPoint = point;
+    }
+    if (rightPoint == null || point.x > rightPoint.x) {
+      rightPoint = point;
+    }
   }
   return {
     bottom: { x: lowestPoint.x, y: lowestPoint.y },
     top: { x: highestPoint.x, y: highestPoint.y },
+    left: { x: leftPoint.x, y: leftPoint.y },
+    right: { x: rightPoint.x, y: rightPoint.y },
   };
 };
 
-const formatTextAnnots = (textRes) => {
+const getTextOrientation = (textRes) => {
+  for (let page of textRes["fullTextAnnotation"]["pages"]) {
+    for (let block of page.blocks) {
+      for (let paragraph of block.paragraphs) {
+        for (let word of paragraph.words) {
+          const first_char = word["symbols"][0];
+          const last_char = word["symbols"][word["symbols"].length - 1];
+
+          const first_char_center = [
+            mean(first_char["boundingBox"]["vertices"].map((v) => v["x"])),
+            mean(first_char["boundingBox"]["vertices"].map((v) => v["y"])),
+          ];
+
+          const last_char_center = [
+            mean(last_char["boundingBox"]["vertices"].map((v) => v["x"])),
+            mean(last_char["boundingBox"]["vertices"].map((v) => v["y"])),
+          ];
+
+          // upright or upside down
+          const top_right = word["boundingBox"]["vertices"][1];
+          const bottom_right = word["boundingBox"]["vertices"][2];
+
+          if (
+            Math.abs(first_char_center[1] - last_char_center[1]) <
+            Math.abs(top_right["y"] - bottom_right["y"])
+          ) {
+            if (first_char_center[0] <= last_char_center[0]) {
+              // upright
+              return 0;
+            } else {
+              // upside down
+              return 180;
+            }
+          } else {
+            // sideways
+            if (first_char_center[1] <= last_char_center[1]) {
+              return 90;
+            } else {
+              return 270;
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+const mean = (arr) => {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+};
+
+const formatTextAnnots = (textRes, fullTextRes) => {
   let counter = 0;
   const totalTexts = [];
 
   for (let text of textRes) {
+    let textOrientation = getTextOrientation(fullTextRes);
     if (counter != 0) {
       let polyPos = polyPositions(text.boundingPoly.vertices);
       totalTexts.push({
         text: text.description,
-        position: polyPos,
+        position: rotatePos(polyPos, textOrientation),
+        orientation: textOrientation,
       });
     }
     counter++;
@@ -164,6 +227,33 @@ const getNameByPosition = (textJson, ignore = null, totalIterations = 0) => {
   }
 
   return totalTexts;
+};
+
+const rotatePos = (pos, angle) => {
+  if (angle == 180) {
+    return {
+      bottom: pos.top,
+      top: pos.bottom,
+      left: pos.left,
+      right: pos.right,
+    }
+  } else if (angle == 90) {
+    return {
+      bottom: pos.right,
+      top: pos.left,
+      left: pos.bottom,
+      right: pos.top,
+    }
+  } else if (angle == 270) {
+    return {
+      bottom: pos.top,
+      top: pos.bottom,
+      left: pos.right,
+      right: pos.left,
+    }
+  } else {
+    return pos
+  }
 };
 
 const getStringLang = async (text) => {
@@ -285,10 +375,10 @@ const ConfirmReceiptCount = () => {
   }, [anaCompleted]);
 
   const sortTexts = (textJson) => {
-    return textJson.sort((a,b) => {
-      return a.boundingPoly.vertices[0].y - b.boundingPoly.vertices[0].y
-  })
-  }
+    return textJson.sort((a, b) => {
+      return a.boundingPoly.vertices[0].y - b.boundingPoly.vertices[0].y;
+    });
+  };
 
   const getName = async (apiRes) => {
     /*
@@ -296,8 +386,11 @@ const ConfirmReceiptCount = () => {
     2. Cut at special chars
     3. Make sure if connecting strings that they are close
     */
-   let sortedRes = sortTexts(apiRes);
-    let textJson = formatTextAnnots(sortedRes);
+    let textRes = apiRes.textAnnotations;
+    let fullTextRes = apiRes;
+    let sortedRes = sortTexts(textRes);
+    let textJson = formatTextAnnots(sortedRes, fullTextRes);
+    console.log(textJson)
     let nameJson = getNameByPosition(textJson);
     if (nameJson[0] == "ERROR") {
       return ["ERROR"];
@@ -306,9 +399,6 @@ const ConfirmReceiptCount = () => {
     let finalName = await getNameByAscii(nameJson);
     return finalName;
   };
-
-  // Stop reload
-  // no phone
 
   const getBusinessName = (img64, counter) => {
     return new Promise((resolve) => {
@@ -319,18 +409,18 @@ const ConfirmReceiptCount = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         canvas.width = img.width;
-        canvas.height = receiptHeaderHeight;
+        canvas.height = img.height;
 
         ctx.drawImage(
           img,
           0,
-          0,
-          img.width,
-          receiptHeaderHeight,
-          0,
-          0,
-          img.width,
-          receiptHeaderHeight
+          0
+          // img.width,
+          // receiptHeaderHeight,
+          // 0,
+          // 0,
+          // img.width,
+          // receiptHeaderHeight
         );
         let header64 = canvas.toDataURL("image/jpeg");
         detectText(header64).then((res) => {
@@ -360,10 +450,13 @@ const ConfirmReceiptCount = () => {
                   .replace(/[^a-zA-Z_]/g, "")
                   .replace(/_*$/g, "");
 
-                if (totalText.length < 3 || totalText.replaceAll("_", "").length < 4) {
+                if (
+                  totalText.length < 3 ||
+                  totalText.replaceAll("_", "").length < 4
+                ) {
                   resolve({ name: `receipt-${counter}` });
                 } else {
-                  totalText = totalText.replaceAll(/_{2,}/g, "_")
+                  totalText = totalText.replaceAll(/_{2,}/g, "_");
                   resolve({ name: totalText });
                 }
               }
@@ -732,7 +825,8 @@ const ConfirmReceiptCount = () => {
                 marginBottom: 30,
               }}
             >
-              Its ok if the detections are not spot on, click "No" when the receipt count is incorrect or the detection is very off
+              Its ok if the detections are not spot on, click "No" when the
+              receipt count is incorrect or the detection is very off
             </p>
             <div
               style={{

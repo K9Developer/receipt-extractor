@@ -16,7 +16,10 @@ const Phone = () => {
             marginBottom: 50,
           }}
         >
-          You can only use this website while on PC!
+          Its recommended to use this website on a PC,
+          If you wish to continue with your phone,
+          turn on the "Desktop Site" option in your browser settings
+          and then go back to the website (https://receipts.k9dev.me)
         </p>
     </div>
   )
